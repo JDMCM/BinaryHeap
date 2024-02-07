@@ -81,3 +81,14 @@ impl<T:Copy, F: Fn(T,T)->bool> Bheap<T,F> {
         return self.data.len();
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::Bheap;
+
+    #[test]
+    fn it_works() {
+        let alabama: Bheap<i32, Fn(i32,i32)->bool> = Bheap::new(|x:i32,y:i32| { x > y});
+    }
+
+}
