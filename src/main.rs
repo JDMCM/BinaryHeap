@@ -44,12 +44,12 @@ impl<T:Copy, F: Fn(T,T)->bool> Bheap<T,F> {
 
     fn fixdown(&mut self) {
         let mut rover:usize = 0;
-        let mut tmp = self.data[rover];
-        while Self::left(rover) < self.data.len() &&
+        let tmp = self.data[rover];
+        while  Self::left(rover) < self.data.len() &&
          ((self.predicate)(self.data[Self::left(rover)],self.data[rover]) || 
          (self.predicate)(self.data[Self::right(rover)],self.data[rover])) {
-            tmp = self.data[rover];
-            if (self.predicate)(self.data[Self::left(rover)],self.data[Self::right(rover)]) {
+
+            if self.data.len() == Self::right(rover) || (self.predicate)(self.data[Self::left(rover)],self.data[Self::right(rover)]) {
                 self.data[rover] = self.data[Self::left(rover)];
                 self.data[Self::left(rover)] = tmp;
                 rover = Self::left(rover);
@@ -68,23 +68,44 @@ impl<T:Copy, F: Fn(T,T)->bool> Bheap<T,F> {
 
     fn dequeue(&mut self) -> T{
         let tmp:T = self.data[0].clone();
-        self.data[0] = self.data.remove(self.data.len()-1);
-        Self::fixdown(self);
+        if self.data.len() != 1 {
+            self.data[0] = self.data.remove(self.data.len()-1);
+            Self::fixdown(self);
+        } else {
+            self.data.remove(self.data.len()-1); 
+        }
+
         return tmp
     }
 
-    fn peek(self) -> T {
+    fn peek(&self) -> T {
         return self.data[0];
     }
 
-    fn is_empty(self) -> bool {
+    fn is_empty(&self) -> bool {
         return self.data.is_empty();
     }
 
-    fn size(self) -> usize {
+    fn size(&self) -> usize {
         return self.data.len();
     }
+
+    fn get(&self,index: usize) -> T {
+        return self.data[index];
+    }
 }
+
+
+// impl Iterator for Bheap<T:Copy, F:Fn(T,T)->bool> {
+//     type Item = T:Copy;
+
+
+//     fn next(&mut self) -> Option<Self::Item> {
+       
+//     }
+// }    
+
+
 
 #[cfg(test)]
 mod tests {
@@ -93,14 +114,47 @@ mod tests {
     #[test]
     fn it_works() {
         let mut alabama: Bheap<i32,Box<dyn Fn(i32,i32)->bool> > = Bheap::new(Box::new(|x:i32,y:i32| { x > y}));
-        alabama.enqueue(5);
-        alabama.enqueue(6);
-        alabama.enqueue(88);
+        
+       
+        
+        
+       
+        
         alabama.enqueue(12);
-        let  t = alabama.peek();
-        //let  line = alabama.size();
-        assert_eq!(t,88);
-        //assert_eq!(line,2);
+        
+        alabama.enqueue(6);
+        
+
+        alabama.enqueue(5);
+        
+     
+        alabama.enqueue(88);
+        
+        assert_eq!(alabama.get(0),88);
+        assert_eq!(alabama.get(1),12);    
+        assert_eq!(alabama.get(2),5);
+        assert_eq!(alabama.get(3),6);
+        
+        
+        
+        
+        assert_eq!(alabama.size(),4);
+        assert_eq!(alabama.peek(),88);
+        assert_eq!(alabama.dequeue(),88);
+        assert_eq!(alabama.size(),3);
+        assert_eq!(alabama.get(0),12);    
+        assert_eq!(alabama.get(1),6);
+        assert_eq!(alabama.get(2),5);
+        assert_eq!(alabama.peek(),12);
+        assert_eq!(alabama.dequeue(),12);
+        assert_eq!(alabama.size(),2);
+        assert_eq!(alabama.get(0),6);    
+        assert_eq!(alabama.get(1),5);
+        assert_eq!(alabama.peek(),6);
+        assert_eq!(alabama.dequeue(),6);
+        assert_eq!(alabama.size(),1);
+        assert_eq!(alabama.peek(),5);
+        assert_eq!(alabama.dequeue(),5);
         
     }
 
