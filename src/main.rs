@@ -14,7 +14,7 @@ impl<T:Copy, F: Fn(T,T)->bool> Bheap<T,F> {
     }
 
     fn top(child: usize) -> usize {
-        return (child-1)/2
+        return ((child-1)/2)
     }
 
     fn left(parent: usize) -> usize {
@@ -26,15 +26,19 @@ impl<T:Copy, F: Fn(T,T)->bool> Bheap<T,F> {
     }
 
     fn fixup(&mut self) {
-        let mut rover: usize = self.data.len();
-        let mut next: usize =Self::top(rover);
-        let mut tmp = self.data[rover];
-        while rover != 0 && (self.predicate)(self.data[rover],self.data[rover]) {
-            tmp = self.data[rover];
-            self.data[rover] = self.data[next];
-            self.data[next] = tmp;
-            rover = next;
-            next = Self::top(rover);
+        let mut rover: usize = self.data.len()-1;
+        
+        if rover != 0 {
+        
+         while rover != 0 && (self.predicate)(self.data[rover],self.data[Self::top(rover)]) {
+             let mut next: usize =Self::top(rover);
+             let mut tmp = self.data[rover];
+             self.data[rover] = self.data[next];
+             self.data[next] = tmp;
+             rover = next;
+    
+            
+         }
         }
     }
 
@@ -73,7 +77,7 @@ impl<T:Copy, F: Fn(T,T)->bool> Bheap<T,F> {
         return self.data[0];
     }
 
-    fn isEmpty(self) -> bool {
+    fn is_empty(self) -> bool {
         return self.data.is_empty();
     }
 
@@ -88,7 +92,16 @@ mod tests {
 
     #[test]
     fn it_works() {
-        let alabama: Bheap<i32, Fn(i32,i32)->bool> = Bheap::new(|x:i32,y:i32| { x > y});
+        let mut alabama: Bheap<i32,Box<dyn Fn(i32,i32)->bool> > = Bheap::new(Box::new(|x:i32,y:i32| { x > y}));
+        alabama.enqueue(5);
+        alabama.enqueue(6);
+        alabama.enqueue(88);
+        alabama.enqueue(12);
+        let  t = alabama.peek();
+        //let  line = alabama.size();
+        assert_eq!(t,88);
+        //assert_eq!(line,2);
+        
     }
 
 }
