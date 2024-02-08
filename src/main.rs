@@ -96,8 +96,8 @@ impl<T:Copy, F: Fn(T,T)->bool> Bheap<T,F> {
 }
 
 
-// impl Iterator for Bheap<T:Copy, F:Fn(T,T)->bool> {
-//     type Item = T:Copy;
+// impl<T:Copy, F:Fn(T,T)->bool> Iterator for Bheap<T, F> {
+//     type Item = T;
 
 
 //     fn next(&mut self) -> Option<Self::Item> {
